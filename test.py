@@ -24,7 +24,7 @@ def send_alert():
     })
     
     return jsonify({
-        'message': 'Tailgating alert sent!',
+       
         'gate': gate,
         'time': first_tailgating_time,
         'alert': alert

@@ -3,7 +3,7 @@ from flask_socketio import SocketIO
 import eventlet
 import time
 
-# Monkey patch to support async features
+# Monkey patch to enable async functionality
 eventlet.monkey_patch()
 
 app = Flask(__name__)
@@ -18,14 +18,13 @@ def send_alert():
     gate = 'Gate 08'
     alert = "🚨 Tailgating Alert! More people detected than scanned!"
     first_tailgating_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-
-    # Emit the alert
+    
     socketio.emit('tailgating_alert', {
         'gate': gate,
         'time': first_tailgating_time,
         'alert': alert
     })
-
+    
     return jsonify({
         'message': 'Tailgating alert sent!',
         'gate': gate,
@@ -34,4 +33,6 @@ def send_alert():
     })
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)
+    # Use eventlet server to support WebSockets
+    import eventlet
+    eventlet.wsgi.server(eventlet.listen(('0.0.0.0', 5000)), app)
